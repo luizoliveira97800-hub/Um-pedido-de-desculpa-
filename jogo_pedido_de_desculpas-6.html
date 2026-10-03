@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uma coisinha pra você ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  background:linear-gradient(135deg,#ffe5ec,#fff6f8);
+  color:#4a2630; overflow:hidden;
+}
+.card{
+  width:min(92vw,430px); min-height:650px; padding:34px 26px;
+  background:rgba(255,255,255,.9); border-radius:32px;
+  box-shadow:0 20px 60px rgba(120,50,70,.16);
+  text-align:center; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.heart{font-size:72px; animation:float 2.4s ease-in-out infinite}
+h1{font-size:27px; margin:18px 0 12px}
+p{font-size:18px; line-height:1.55; margin:8px 0 22px}
+button{
+  width:100%; border:0; padding:15px 18px; margin:7px 0;
+  border-radius:18px; background:#ff6f91; color:white;
+  font-size:17px; font-weight:700; cursor:pointer;
+  box-shadow:0 8px 18px rgba(255,111,145,.22);
+  transition:.2s;
+}
+button:hover{transform:translateY(-2px);filter:brightness(1.03)}
+.secondary{background:#fff0f4;color:#b74362;box-shadow:none}
+.small{font-size:14px;color:#92727a;margin-top:18px}
+.progress{position:absolute;top:15px;left:20px;right:20px;height:6px;background:#f7d8e0;border-radius:99px}
+.bar{height:100%;background:#ff6f91;border-radius:99px;transition:.35s}
+.burst{position:absolute;inset:0;pointer-events:none}
+.burst span{position:absolute;font-size:22px;animation:rise 2s ease-out forwards}
+.shake{animation:shake .35s}
+@keyframes float{50%{transform:translateY(-8px) rotate(3deg)}}
+@keyframes rise{from{transform:translateY(30px) scale(.5);opacity:1}to{transform:translateY(-500px) scale(1.2);opacity:0}}
+@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)}}
+.fade{animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div id="content"></div>
+  <div class="burst" id="burst"></div>
+</div>
+<script>
+const screens = [
+ {icon:"💌", title:"Oi… fiz uma coisinha pra você.", text:"Promete chegar até o final? ❤️", buttons:[["Prometo","next"]]},
+ {icon:"😤", title:"Primeira pergunta:", text:"Você ainda tá com muita raiva de mim? 😭", buttons:[
+   ["MUITA 😡","anger"],["Um pouquinho 😤","next"],["Já passou ❤️","next"]]},
+ {icon:"🥺", title:"Eu sei que o que aconteceu não foi das melhores coisas…", text:"E eu não gosto quando a gente fica assim.", buttons:[["Continuar ❤️","next"]]},
+ {icon:"🩹", title:"Mesmo que tenha sido só uma discussão…", text:"Eu não quero deixar isso afastar a gente.", buttons:[["Entendi 🫶","next"]]},
+ {icon:"💗", title:"Então… posso te pedir desculpa?", text:"🥺❤️", buttons:[["Pode","next"],["Tô pensando","thinking"]]},
+ {icon:"🫶", title:"Eu gosto muito de você.", text:"E prefiro mil vezes ficar bem com você do que ficar de mal.", buttons:[["Continuar","next"]]},
+ {icon:"❤️", title:"Você aceita fazer as pazes comigo?", text:"", buttons:[["Sim ❤️","next"],["Ainda tô brava 😤","still"]]},
+ {icon:"🌷", title:"Última pergunta…", text:"Podemos deixar essa discussão pra trás e ficar bem de novo? ❤️", buttons:[["Sim ❤️","next"],["Ainda preciso de um tempinho","time"]]},
+ {icon:"💞", title:"Desculpa pelo que aconteceu.", text:"Eu não quero que o que aconteceu faça a gente ficar assim. Você é importante pra mim e eu só quero ficar bem com você. ❤️", buttons:[["Recomeçar do começo 🔄","restart"]]}
+];
+
+let i=0;
+function render(extra=null){
+ const s=screens[i], c=document.getElementById("content");
+ c.className="fade";
+ let buttons=(extra?extra.buttons:s.buttons).map(([label,act])=>`<button class="${label.includes("Ainda")||label.includes("pensando")||label.includes("tempinho")?"secondary":""}" onclick="act('${act}')">${label}</button>`).join("");
+ c.innerHTML=`<div class="heart">${extra?extra.icon:s.icon}</div><h1>${extra?extra.title:s.title}</h1><p>${extra?extra.text:s.text}</p>${buttons}<div class="small">feito de coração ❤️</div>`;
+ document.getElementById("bar").style.width=((i+1)/screens.length*100)+"%";
+}
+function act(a){
+ if(a==="next"){i=Math.min(i+1,screens.length-1);render(); hearts();}
+ if(a==="anger"){
+   const b=document.getElementById("card"); b.classList.add("shake"); setTimeout(()=>b.classList.remove("shake"),400);
+   render({icon:"🥺",title:"Tá… eu entendi 😭",text:"Eu sei que você tá com muita raiva. Só queria tentar melhorar as coisas com você. ❤️",buttons:[["Tá bom, continua… 🥺","next"]]});
+   hearts("😡");
+ }
+ if(a==="thinking"){
+   render({icon:"🥺",title:"Tudo bem.",text:"Eu não quero te pressionar. Só queria que você soubesse que meu pedido de desculpas é sincero. ❤️",buttons:[["Continuar","next"]]});
+ }
+ if(a==="still"){
+   render({icon:"🥺",title:"Tudo bem…",text:"Eu entendo. Só queria que você soubesse que eu realmente quero ficar bem com você. ❤️",buttons:[["Continuar","next"]]});
+ }
+ if(a==="time"){
+   render({icon:"🌷",title:"Eu respeito seu tempo.",text:"Só não queria terminar esse jogo sem te dizer que você é importante pra mim. ❤️",buttons:[["Continuar","next"]]});
+ }
+ if(a==="restart"){i=0;render();hearts();}
+}
+function hearts(symbol="❤️"){
+ const burst=document.getElementById("burst"); burst.innerHTML="";
+ for(let n=0;n<12;n++){let s=document.createElement("span");s.textContent=symbol;s.style.left=(5+Math.random()*90)+"%";s.style.bottom="5%";s.style.animationDelay=(Math.random()*.4)+"s";burst.appendChild(s)}
+ setTimeout(()=>burst.innerHTML="",2200);
+}
+render();
+</script>
+</body>
+</html>
